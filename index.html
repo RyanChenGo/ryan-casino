@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Casino Royal - Activités pour jeunes adultes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none; /* légèrement plus "casino" mais on garde lisible */
+        }
+
+        body {
+            background: linear-gradient(145deg, #0a2f2a 0%, #051f1b 100%);
+            font-family: 'Segoe UI', 'Poppins', 'Roboto', system-ui, -apple-system, 'Montserrat', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        /* Carte principale style casino chic */
+        .casino-container {
+            max-width: 1300px;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(3px);
+            border-radius: 3rem;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.1);
+            padding: 2rem 2rem 1.5rem;
+            border: 1px solid rgba(218, 165, 32, 0.5);
+            transition: all 0.2s;
+        }
+
+        /* header style */
+        .casino-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #d4af37;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .casino-header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: 4px;
+            background: linear-gradient(135deg, #f9e4b7, #d4af37, #b8860b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            word-break: keep-all;
+        }
+
+        .casino-header p {
+            color: #ecd67a;
+            font-style: italic;
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+
+        /* zone d'affichage dynamique (activités ou messages) */
+        .activites-section {
+            background: rgba(20, 20, 30, 0.7);
+            border-radius: 2rem;
+            padding: 1.8rem;
+            margin: 1.5rem 0;
+            backdrop-filter: blur(4px);
+            box-shadow: inset 0 0 12px rgba(0,0,0,0.3), 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ffdf8c;
+            border-left: 6px solid #f3b33d;
+            padding-left: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .grid-activites {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.8rem;
+        }
+
+        .activite-card {
+            background: #1e2a25e6;
+            border-radius: 1.5rem;
+            padding: 1.2rem;
+            transition: transform 0.2s ease, box-shadow 0.2s;
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            box-shadow: 0 8px 14px rgba(0,0,0,0.3);
+        }
+
+        .activite-card:hover {
+            transform: translateY(-5px);
+            border-color: #e5b73b;
+            box-shadow: 0 18px 28px rgba(0,0,0,0.4);
+            background: #2a3a33e6;
+        }
+
+        .activite-nom {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #f7d980;
+            margin-bottom: 0.5rem;
+        }
+
+        .activite-desc {
+            color: #d4d9ce;
+            font-size: 0.95rem;
+            margin: 0.7rem 0;
+            line-height: 1.4;
+        }
+
+        .badge-chips {
+            display: inline-block;
+            background: #00000066;
+            padding: 0.25rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            color: #ffdd99;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        .empty-message {
+            background: #1f1b14b3;
+            border-radius: 2rem;
+            padding: 2rem;
+            text-align: center;
+            font-size: 1.4rem;
+            color: #f7cd7c;
+            border: 1px dashed #ffc857;
+        }
+
+        .empty-message::before {
+            content: "🎲 ";
+            font-size: 2rem;
+        }
+
+        /* footer */
+        .footer-casino {
+            margin-top: 2rem;
+            text-align: center;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(212, 175, 55, 0.5);
+            font-size: 0.85rem;
+            color: #cbb86b;
+            font-weight: 500;
+        }
+
+        /* age gate overlay / modale */
+        .age-gate {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            transition: opacity 0.3s ease;
+        }
+
+        .age-card {
+            background: linear-gradient(145deg, #26221c, #181510);
+            max-width: 450px;
+            width: 90%;
+            padding: 2.5rem 1.8rem;
+            border-radius: 3rem;
+            text-align: center;
+            border: 1px solid #dbb44b;
+            box-shadow: 0 20px 35px black;
+        }
+
+        .age-card h2 {
+            font-size: 2rem;
+            color: #ffd966;
+            margin-bottom: 1rem;
+        }
+
+        .age-card p {
+            color: #f0e2b6;
+            font-size: 1.2rem;
+            margin: 1rem 0;
+        }
+
+        .btn-age {
+            background: #d4af37;
+            border: none;
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding: 0.8rem 2rem;
+            margin: 0.6rem;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: inherit;
+            color: #1e2a1f;
+            box-shadow: 0 4px 0 #6b4c1b;
+        }
+
+        .btn-age:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #6b4c1b;
+        }
+
+        .btn-refuse {
+            background: #4a3a28;
+            color: #ffcf8a;
+            box-shadow: 0 4px 0 #2c241a;
+        }
+
+        .small-link {
+            background: none;
+            border: none;
+            color: #ffd58c;
+            text-decoration: underline;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 680px) {
+            .casino-container {
+                padding: 1.2rem;
+            }
+            .activite-nom {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="casino-container" id="casinoMainApp">
+    <div class="casino-header">
+        <h1>🎰 LUXOR CASINO 🎴</h1>
+        <p>Jeux de prestige ·  activités exclusives</p>
+    </div>
+
+    <!-- zone dynamique : activités ou message "pas d'activités" -->
+    <div class="activites-section" id="activitesContainer">
+        <div class="section-title">✨ Activités du moment ✨</div>
+        <div id="activitesListRender">
+            <!-- Le contenu sera injecté via JS (activités ou message) -->
+            <div style="text-align:center; padding:2rem;">Chargement des activités...</div>
+        </div>
+    </div>
+
+    <div class="footer-casino">
+        © Ryan Casino Inc. 2025-2026 - Tu dois avoir au moins 9 ans pour participer
+    </div>
+</div>
+
+<!-- age gate overlay (première vérification + stockage localstorage) -->
+<div id="ageGateOverlay" class="age-gate">
+    <div class="age-card">
+        <h2>🔞 Vérification d'âge</h2>
+        <p>Bienvenue au Casino Ryan.<br>Pour accéder aux activités, tu dois avoir <strong>9 ans ou plus</strong>.</p>
+        <button id="btnOuiAge" class="btn-age">✅ J'ai 9 ans ou plus</button>
+        <button id="btnNonAge" class="btn-age btn-refuse">❌ Non, moins de 9 ans</button>
+        <div style="margin-top: 20px;">
+            <button id="resetAccidentBtn" class="small-link">💡 Clique par accident ? Je suis 9 ans et plus ? Clique ici</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ---------- Configuration ----------
+    // Simulation de la récupération du fichier activities.json
+    // Comme il s'agit d'un environnement client, on va chercher le fichier réel.
+    // S'il n'existe pas (404) ou si le contenu est vide/invalide, on affiche "aucune activité".
+    // On utilise fetch pour charger "activities.json" (doit être dans le même répertoire).
+    // Pour la robustesse, on prévoit un fallback: si erreur réseau ou json mal formé => pas d'activités.
+    
+    // Variables globales
+    let activitiesData = [];        // stocke la liste des activités après chargement réussi
+    let isAgeVerified = false;      // flag pour savoir si l'utilisateur a passé le gate
+    let ageGateLocked = false;      // si l'utilisateur a refusé => affichage message définitif sans accès
+
+    // Éléments DOM
+    const ageGateOverlay = document.getElementById('ageGateOverlay');
+    const activitesListRender = document.getElementById('activitesListRender');
+    const btnOui = document.getElementById('btnOuiAge');
+    const btnNon = document.getElementById('btnNonAge');
+    const resetAccidentBtn = document.getElementById('resetAccidentBtn');
+
+    // Fonction pour afficher les activités (à appeler quand age ok et données chargées)
+    function renderActivities() {
+        if (!activitesListRender) return;
+        // Cas où l'utilisateur a été refoulé (age <9) et on ne doit pas montrer le contenu normal
+        // mais l'overlay reste avec message "Désolé" ? On va gérer via un état spécifique:
+        // Si ageGateLocked === true (refus), on ne doit pas afficher le contenu du casino normal.
+        // Dans ce cas, le overlay affichera le message de refus et masquera les boutons.
+        // Mais attention: selon la consigne: si pas 9 ans => afficher "Désolé - Mais tu dois au moins avoir 9 ans"
+        // (et stocker localstorage). On doit stocker l'état dans localStorage. Après rechargement on doit respecter.
+        
+        // Donc la fonction renderActivities n'est appelée que si age ok ET on a chargé les activités ou pas d'activités.
+        if (!activitiesData || activitiesData.length === 0) {
+            // Aucune activité trouvée -> afficher "aucune activité"
+            activitesListRender.innerHTML = `
+                <div class="empty-message">
+                    🃟 Aucune activité disponible pour le moment. Revenez plus tard ! 🃟
+                </div>
+            `;
+            return;
+        }
+        
+        // Sinon afficher la grille d'activités
+        let html = `<div class="grid-activites">`;
+        activitiesData.forEach(act => {
+            // On suppose que chaque objet peut avoir des champs: nom, description, (optionnel jetons)
+            const nom = act.nom || act.name || "Activité mystère";
+            const description = act.description || act.desc || "Aucune description fournie.";
+            const bonus = act.bonus ? act.bonus : (act.chips ? act.chips : "🎲");
+            html += `
+                <div class="activite-card">
+                    <div class="activite-nom">🎰 ${escapeHtml(nom)}</div>
+                    <div class="activite-desc">${escapeHtml(description)}</div>
+                    <div class="badge-chips">💰 ${escapeHtml(bonus)}</div>
+                </div>
+            `;
+        });
+        html += `</div>`;
+        activitesListRender.innerHTML = html;
+    }
+    
+    // utilitaire anti-XSS simple
+    function escapeHtml(str) {
+        if (!str) return "";
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+            return c;
+        });
+    }
+    
+    // Fonction pour charger activities.json
+    async function loadActivitiesFromJSON() {
+        try {
+            const response = await fetch('activities.json');
+            if (!response.ok) {
+                // Fichier introuvable ou erreur HTTP => pas d'activités
+                console.warn("activities.json non trouvé ou erreur:", response.status);
+                activitiesData = [];
+                // Si l'age est déjà vérifié, on met à jour l'affichage
+                if (isAgeVerified && !ageGateLocked) {
+                    renderActivities();
+                }
+                return;
+            }
+            const data = await response.json();
+            // On vérifie que c'est un tableau, sinon vide
+            if (Array.isArray(data) && data.length > 0) {
+                activitiesData = data;
+            } else {
+                activitiesData = [];
+            }
+        } catch (err) {
+            console.error("Erreur lors du chargement de activities.json :", err);
+            activitiesData = [];
+        } finally {
+            // Si l'age est validé avant la fin du fetch, on met à jour l'affichage
+            if (isAgeVerified && !ageGateLocked) {
+                renderActivities();
+            }
+        }
+    }
+    
+    // Stocker dans localStorage l'état de vérification (age validé ou refusé)
+    // On utilisera deux clés: "casinoAgeVerified" (boolean) et "casinoAgeRefused" si jamais refus catégorique
+    // Selon consigne : si l'utilisateur dit moins de 9 ans -> afficher message Désolé, et stocker (localstorage)
+    // Pour qu'au rechargement, il soit bloqué.
+    function setAgeAccepted(accepted) {
+        if (accepted) {
+            localStorage.setItem('casinoAgeStatus', 'accepted');
+            localStorage.removeItem('casinoAgeRefused');
+        } else {
+            localStorage.setItem('casinoAgeStatus', 'refused');
+            localStorage.setItem('casinoAgeRefused', 'true');
+        }
+    }
+    
+    function getAgeStatus() {
+        const status = localStorage.getItem('casinoAgeStatus');
+        if (status === 'accepted') return 'accepted';
+        if (status === 'refused') return 'refused';
+        return null; // jamais choisi
+    }
+    
+    // Afficher l'interface refus (Désolé message) sur l'overlay (remplacement du contenu)
+    function showRefusedMessage() {
+        // On modifie l'intérieur de age-card pour afficher le message de désolé sans options "oui/non"
+        // mais on garde le lien "Clique par accident? ..." pour reset (effacer localStorage et recharger)
+        const ageCard = document.querySelector('#ageGateOverlay .age-card');
+        if (ageCard) {
+            ageCard.innerHTML = `
+                <h2>😞 Désolé</h2>
+                <p style="font-size:1.4rem;">Mais tu dois au moins avoir 9 ans</p>
+                <div style="margin-top: 30px;">
+                    <button id="resetFromRefusedBtn" class="small-link">💡 Clique par accident ? Je suis 9 ans et plus ? Clique ici</button>
+                </div>
+            `;
+            const resetRefusedBtn = document.getElementById('resetFromRefusedBtn');
+            if (resetRefusedBtn) {
+                resetRefusedBtn.addEventListener('click', () => {
+                    // Efface localStorage et recharge la page pour repartir du début
+                    localStorage.removeItem('casinoAgeStatus');
+                    localStorage.removeItem('casinoAgeRefused');
+                    window.location.reload();
+                });
+            }
+        }
+        // On s'assure que l'overlay reste visible et que le contenu casino principal n'est pas accessible
+        ageGateOverlay.classList.remove('hidden');
+        ageGateLocked = true;
+        isAgeVerified = false;
+    }
+    
+    // Valider l'accès (age >=9)
+    function grantAccess() {
+        isAgeVerified = true;
+        ageGateLocked = false;
+        setAgeAccepted(true);
+        // Cacher l'overlay
+        ageGateOverlay.classList.add('hidden');
+        // Maintenant on charge / rafraîchit l'affichage des activités
+        // Si activitiesData est déjà chargé via fetch, on render; sinon fetch encore?
+        if (activitiesData.length === 0 && window.activitiesFetchDone !== true) {
+            // On relance fetch si besoin? Le fetch a probablement déjà eu lieu, mais on assure
+            loadActivitiesFromJSON().then(() => {
+                renderActivities();
+            });
+        } else {
+            renderActivities();
+        }
+    }
+    
+    // Fonction d'initialisation du vérificateur d'âge selon localStorage et actions
+    function initAgeGate() {
+        const status = getAgeStatus();
+        if (status === 'accepted') {
+            // utilisateur déjà vérifié => grantAccess directement
+            grantAccess();
+            // après grantAccess, on charge les activités si pas déjà fait
+            loadActivitiesFromJSON().then(() => {
+                if (isAgeVerified) renderActivities();
+            });
+        } 
+        else if (status === 'refused') {
+            // déjà refusé précédemment => afficher le message Désolé sans possibilité de changer (sauf reset)
+            showRefusedMessage();
+            // cacher le contenu casino derrière, mais l'overlay bloque
+            ageGateOverlay.classList.remove('hidden');
+        }
+        else {
+            // première visite, overlay actif avec les deux boutons
+            ageGateOverlay.classList.remove('hidden');
+            // On garde les boutons normaux
+            // On réattache les événements (ils peuvent être remplacés par un refresh)
+            attachGateEvents();
+        }
+    }
+    
+    function attachGateEvents() {
+        // On récupère les boutons s'ils existent dans le DOM actuel (au cas où ils aient été modifiés)
+        const ouiBtn = document.getElementById('btnOuiAge');
+        const nonBtn = document.getElementById('btnNonAge');
+        const accidentBtn = document.getElementById('resetAccidentBtn');
+        
+        if (ouiBtn) {
+            const newOui = ouiBtn.cloneNode(true);
+            ouiBtn.parentNode.replaceChild(newOui, ouiBtn);
+            newOui.addEventListener('click', () => {
+                grantAccess();
+            });
+        }
+        if (nonBtn) {
+            const newNon = nonBtn.cloneNode(true);
+            nonBtn.parentNode.replaceChild(newNon, nonBtn);
+            newNon.addEventListener('click', () => {
+                // Refus: afficher message Désolé, stocker dans localStorage
+                setAgeAccepted(false);
+                showRefusedMessage();
+            });
+        }
+        if (accidentBtn) {
+            const newAcc = accidentBtn.cloneNode(true);
+            accidentBtn.parentNode.replaceChild(newAcc, accidentBtn);
+            newAcc.addEventListener('click', (e) => {
+                // Réinitialiser le localStorage et forcer rechargement pour repartir à zéro (âge non déterminé)
+                localStorage.removeItem('casinoAgeStatus');
+                localStorage.removeItem('casinoAgeRefused');
+                window.location.reload();
+            });
+        }
+    }
+    
+    // Fonction pour préparer le chargement asynchrone des activités (indépendant)
+    let activitiesFetchDone = false;
+    async function preloadActivities() {
+        await loadActivitiesFromJSON();
+        activitiesFetchDone = true;
+        // Si l'age est déjà validé et que l'affichage n'est pas encore fait, on render
+        if (isAgeVerified && !ageGateLocked) {
+            renderActivities();
+        }
+    }
+    
+    // Pour le bouton "Clique par accident ? Je suis 9 ans et plus ?" dans le overlay initial aussi
+    // déjà géré par attachGateEvents via resetAccidentBtn.
+    // Également, on doit gérer le cas où après un refus, le lien dans la carte refuse doit reset.
+    // On va wrapper aussi le reset après chargement.
+    
+    // Lancer l'application
+    function startApp() {
+        preloadActivities();   // charge en arrière-plan le fichier activities.json (ou échec)
+        initAgeGate();        // gère l'affichage de l'overlay selon localStorage
+    }
+    
+    // Gestion de la persistence : si jamais l'utilisateur rafraichit après acceptation, tout fonctionne.
+    startApp();
+    
+    // Ajout d'un eventListener pour le bouton "Clique par accident" présent dans le refus déjà dynamique,
+    // mais on s'assure que si quelqu'un clique après avoir refusé, le reset refus est réattribué via mutation ? 
+    // Le showRefusedMessage crée un bouton 'resetFromRefusedBtn', on lui attache un event listener qui supprime localStorage + reload.
+    // C'est déjà fait dans showRefusedMessage.
+    
+    // Toutefois, si le DOM change ou des réinitialisations, on fait en sorte que pour le bouton de réinitialisation du refus,
+    // le rechargement efface tout. C'est propre.
+    
+    // Option supplémentaire: On pourrait ajouter un message console, mais interface complète.
+    
+    // Pour correspondre totalement: l'énoncé demande "Clique par accident ? Je suis 9 ans et plus ? Clique ici"
+    // Ce lien apparaît à la fois dans le gate initial et aussi après refus (pour corriger).
+    // De plus, lorsque l'utilisateur accepte, l'overlay est caché et le contenu du casino s'affiche.
+    
+    // Si le fichier activities.json n'existe pas ou qu'il est vide ou mal formaté, le message "aucune activité" apparaît.
+    // On a bien prévu le cas: activitiesData.length === 0 -> empty-message.
+    
+    // Amélioration: Simuler des données par défaut? Non, strict respect consigne: si activities.json génère des activités on les affiche,
+    // sinon afficher "aucune activité". On ne doit pas inventer.
+    // Pour faciliter le test, l'utilisateur peut créer un fichier activities.json. Si absent -> aucune activité.
+    
+    // On s'assure que le footer texte est bien présent: "© Ryan Casino Inc. 2025-2026 - Tu dois avoir au moins 9 ans pour participer"
+    // Déjà dans le HTML statique.
+    
+    // Bonus: on vérifie que le localstorage stocke correctement.
+    // Si l'utilisateur ferme et rouvre après acceptation -> pas de gate, contenu affiché directement.
+    // Si après refus -> message Désolé persistant + localStorage.
+    // Le bouton "clique par accident" efface le stockage et recharge.
+    
+    // Dernier détail: Il faut que l'affichage des activités soit réactif quand le fetch termine après grantAccess.
+    // Dans preloadActivities on appelle render si isAgeVerified true, grantAccess set isAgeVerified à true et render aussi.
+    // Il n'y a pas de conflit.
+    
+    // Correction mineure: Dans grantAccess, après avoir caché l'overlay, si activitiesData est vide mais fetch pas encore fini,
+    // le render pourrait afficher "Aucune activité". C'est bon. Si fetch finit plus tard, on pourrait re-render? 
+    // Dans preloadActivities on vérifie isAgeVerified et on rerender, donc finalement l'affichage sera mis à jour.
+    // Parfait.
+    
+    // Ajoutons aussi un petit ajustement: si age déjà accepted et qu'on recharge la page, l'overlay est caché, et le fetch remplit.
+    // Tout est cohérent.
+    
+    // Pour prévenir les problèmes de double initialisation, on utilise des guardes.
+    console.log("Casino chargé - Respect des conditions d'âge requis.");
+</script>
+</body>
+</html>

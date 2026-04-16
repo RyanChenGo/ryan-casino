@@ -1,0 +1,12 @@
+[
+    {
+        "name": "Course !",
+        "description": "Cours dans la cour d'école , cet activité se déroule chaque semaine .",
+        "bonus": "10 points ou 1 juspoint"
+    },
+    {
+        "name": "Tire au sort",
+        "description": "Cet activité n'est pas encore commencé.",
+        "bonus": "Cet activité n'est pas encore commencé."
+    }
+]

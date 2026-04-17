@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suivi de commandes</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+    }
+
+    body {
+      background: #f0f4f9;
+      font-family: 'Segoe UI', 'Roboto', system-ui, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      color: #1e293b;
+    }
+
+    .conteneur-suivi {
+      max-width: 950px;
+      width: 100%;
+      background: white;
+      border-radius: 32px;
+      box-shadow: 0 20px 35px -6px rgba(0,0,0,0.1), 0 8px 15px -4px rgba(0,0,0,0.05);
+      padding: 28px 24px 32px;
+      transition: all 0.2s ease;
+    }
+
+    h1 {
+      font-size: 2.1rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin-top: 0;
+      margin-bottom: 0.25rem;
+      color: #0b1e33;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h1 i {
+      font-size: 2rem;
+    }
+
+    .sous-titre {
+      color: #5e6f8c;
+      margin-bottom: 28px;
+      font-weight: 400;
+      font-size: 1rem;
+      border-left: 4px solid #a0b8d4;
+      padding-left: 16px;
+    }
+
+    /* 列表区域 — 卡片式选择 */
+    .liste-commandes {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .carte-commande {
+      background: #fafcff;
+      border: 1.5px solid #e6ecf5;
+      border-radius: 20px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      transition: all 0.15s;
+      cursor: pointer;
+    }
+
+    .carte-commande:hover {
+      background: #eef3fe;
+      border-color: #8aa9d6;
+      box-shadow: 0 4px 8px rgba(0,35,70,0.04);
+    }
+
+    .info-resume {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .nom-client {
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: #14273e;
+    }
+
+    .numero-commande {
+      font-family: 'SF Mono', 'Menlo', 'Monaco', 'Cascadia Code', monospace;
+      background: #e2eaf5;
+      padding: 4px 12px;
+      border-radius: 40px;
+      font-size: 0.9rem;
+      color: #1f3a5f;
+      display: inline-block;
+      width: fit-content;
+    }
+
+    .badge-statut {
+      background: #d4e2f0;
+      color: #1e3b5c;
+      padding: 6px 16px;
+      border-radius: 40px;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .zone-saisie {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .champ-code {
+      padding: 12px 16px;
+      border: 1.5px solid #ccd9e9;
+      border-radius: 48px;
+      font-size: 1rem;
+      width: 200px;
+      background: white;
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    .champ-code:focus {
+      border-color: #3e6b9c;
+      box-shadow: 0 0 0 3px rgba(62,107,156,0.15);
+    }
+
+    .bouton {
+      background: #1f3a5f;
+      color: white;
+      border: none;
+      padding: 12px 22px;
+      border-radius: 48px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: 0.15s;
+      box-shadow: 0 3px 8px rgba(0,20,40,0.1);
+      border: 1px solid #2c4a70;
+      letter-spacing: 0.3px;
+    }
+
+    .bouton:hover {
+      background: #142b44;
+      transform: scale(1.01);
+      box-shadow: 0 8px 14px rgba(0,25,50,0.12);
+    }
+
+    .bouton-secondaire {
+      background: #eef3fc;
+      color: #1f3a5f;
+      border: 1px solid #b7c9e2;
+      box-shadow: none;
+    }
+
+    .bouton-secondaire:hover {
+      background: #dde7f5;
+    }
+
+    .message-vide {
+      text-align: center;
+      padding: 48px 20px;
+      background: #f9fbfe;
+      border-radius: 28px;
+      color: #4f658d;
+      font-size: 1.3rem;
+      font-weight: 400;
+      border: 1px dashed #b7cae2;
+    }
+
+    /* 详情卡片 */
+    .detail-commande {
+      margin-top: 28px;
+      background: #f3f8ff;
+      border-radius: 28px;
+      padding: 24px 26px;
+      border: 1px solid #d6e3f5;
+    }
+
+    .en-tete-detail {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .titre-detail {
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: #0f293f;
+    }
+
+    .grille-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 24px 18px;
+      margin-bottom: 22px;
+    }
+
+    .element-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+      color: #5f7392;
+      margin-bottom: 6px;
+    }
+
+    .valeur {
+      font-size: 1.2rem;
+      font-weight: 500;
+      word-break: break-word;
+      color: #132a41;
+    }
+
+    .valeur.description {
+      font-size: 1rem;
+      font-weight: 400;
+      background: #e3edf9;
+      padding: 12px 16px;
+      border-radius: 18px;
+      line-height: 1.5;
+    }
+
+    .ligne-motdepasse {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+      background: #ffffffc7;
+      padding: 12px 18px;
+      border-radius: 40px;
+      border: 1px solid #bdd0ea;
+    }
+
+    .texte-motdepasse {
+      font-family: monospace;
+      font-size: 1.3rem;
+      letter-spacing: 2px;
+      background: #eef3fa;
+      padding: 4px 16px;
+      border-radius: 30px;
+      color: #1e3b5c;
+    }
+
+    .icone-copie {
+      cursor: pointer;
+      background: none;
+      border: 1px solid #9eb7d4;
+      padding: 8px 18px;
+      border-radius: 40px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #1f3a5f;
+      transition: all 0.15s;
+    }
+
+    .icone-copie:hover {
+      background: #1f3a5f;
+      color: white;
+      border-color: #1f3a5f;
+    }
+
+    .alerte-erreur {
+      color: #b13e3e;
+      background: #ffebeb;
+      padding: 8px 18px;
+      border-radius: 30px;
+      font-size: 0.9rem;
+      margin-left: 10px;
+    }
+
+    .fermer-detail {
+      background: transparent;
+      border: 1px solid #afc4e0;
+      color: #27496e;
+      padding: 8px 16px;
+      border-radius: 30px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    footer {
+      margin-top: 30px;
+      font-size: 0.8rem;
+      color: #7d93b0;
+      text-align: center;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .flex-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* 响应式 */
+    @media (max-width: 550px) {
+      .conteneur-suivi { padding: 18px 14px; }
+      h1 { font-size: 1.7rem; }
+      .carte-commande { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .zone-saisie { width: 100%; }
+      .champ-code { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+<div class="conteneur-suivi">
+  <h1>
+    <span>📦 Suivi de commandes</span>
+  </h1>
+  <div class="sous-titre">Saisissez le mot de passe associé à votre commande</div>
+
+  <!-- 列表容器：动态渲染 -->
+  <div id="listeCommandes" class="liste-commandes"></div>
+
+  <!-- 空状态显示区域 -->
+  <div id="aucuneCommande" class="message-vide hidden">
+    Aucune commande pour l'instant
+  </div>
+
+  <!-- 详情面板 (默认隐藏) -->
+  <div id="panneauDetail" class="detail-commande hidden">
+    <div class="en-tete-detail">
+      <span class="titre-detail">🔐 Détails de la commande</span>
+      <button id="fermerDetailBtn" class="fermer-detail">✕ Fermer</button>
+    </div>
+    <div class="grille-info">
+      <div class="element-info">
+        <span class="label">Nom</span>
+        <span id="detailNom" class="valeur">—</span>
+      </div>
+      <div class="element-info">
+        <span class="label">Numéro de suivi</span>
+        <span id="detailTracking" class="valeur" style="font-family: monospace;">—</span>
+      </div>
+      <div class="element-info">
+        <span class="label">Statut</span>
+        <span id="detailStatut" class="valeur">—</span>
+      </div>
+    </div>
+    <div class="element-info" style="margin-bottom: 20px;">
+      <span class="label">Description</span>
+      <div id="detailDescription" class="valeur description">—</div>
+    </div>
+    <div class="ligne-motdepasse">
+      <span style="font-weight: 600; color: #1f3a5f;">Mot de passe :</span>
+      <span id="detailMotdepasse" class="texte-motdepasse">••••••</span>
+      <button id="copierMotdepasseBtn" class="icone-copie" title="Copier le mot de passe">📋 Copier</button>
+      <span id="feedbackCopie" style="font-size:0.9rem; color:#2b6e4f;"></span>
+    </div>
+    <div id="erreurDetail" class="alerte-erreur hidden"></div>
+  </div>
+  
+  <footer>🔒 Accès sécurisé · Vos informations sont confidentielles</footer>
+</div>
+
+<script>
+  (function() {
+    "use strict";
+
+    // ----------  DOM 元素 ----------
+    const listeEl = document.getElementById('listeCommandes');
+    const aucuneCommandeEl = document.getElementById('aucuneCommande');
+    const panneauDetail = document.getElementById('panneauDetail');
+    const fermerDetailBtn = document.getElementById('fermerDetailBtn');
+    
+    // 详情字段
+    const detailNom = document.getElementById('detailNom');
+    const detailTracking = document.getElementById('detailTracking');
+    const detailStatut = document.getElementById('detailStatut');
+    const detailDescription = document.getElementById('detailDescription');
+    const detailMotdepasse = document.getElementById('detailMotdepasse');
+    const copierBtn = document.getElementById('copierMotdepasseBtn');
+    const feedbackCopie = document.getElementById('feedbackCopie');
+    const erreurDetail = document.getElementById('erreurDetail');
+
+    // 全局存储
+    let commandesData = [];            // 原始数据
+    let commandeActive = null;         // 当前查看的订单对象
+
+    // ---------- 辅助函数 ----------
+    function escapeHtml(texte) {
+      if (!texte && texte !== 0) return '';
+      return String(texte)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // 从 infos.json 加载数据
+    async function chargerInfos() {
+      try {
+        const response = await fetch('infos.json');
+        if (!response.ok) {
+          throw new Error(`Erreur HTTP: ${response.status}`);
+        }
+        const data = await response.json();
+        // 期望 data 是一个数组，每个对象包含 name, tracking number, status, descriptions, password
+        if (Array.isArray(data)) {
+          commandesData = data;
+        } else {
+          // 如果 json 是一个对象，尝试提取数组 (防御)
+          commandesData = [];
+          console.warn("infos.json n'est pas un tableau. Affichage vide.");
+        }
+      } catch (err) {
+        console.error("Impossible de charger infos.json :", err);
+        commandesData = [];
+      } finally {
+        afficherListeOuVide();
+      }
+    }
+
+    // 渲染列表或空状态
+    function afficherListeOuVide() {
+      // 清空列表容器
+      listeEl.innerHTML = '';
+      
+      if (!commandesData || commandesData.length === 0) {
+        // 显示 "Aucune commande pour l'instant"
+        aucuneCommandeEl.classList.remove('hidden');
+        listeEl.classList.add('hidden');
+        // 同时隐藏详情面板 (如果开着)
+        panneauDetail.classList.add('hidden');
+        commandeActive = null;
+        return;
+      }
+      
+      // 有数据：隐藏空状态，显示列表
+      aucuneCommandeEl.classList.add('hidden');
+      listeEl.classList.remove('hidden');
+      
+      // 为每条数据生成卡片
+      commandesData.forEach((cmd, index) => {
+        const carte = creerCarteCommande(cmd, index);
+        listeEl.appendChild(carte);
+      });
+      
+      // 如果之前有打开的详情但数据变了，关闭详情（安全）
+      if (!commandeActive || !commandesData.includes(commandeActive)) {
+        panneauDetail.classList.add('hidden');
+        commandeActive = null;
+      }
+    }
+
+    // 创建单个订单卡片 (显示名称，订单号，状态，以及密码输入区)
+    function creerCarteCommande(cmd, index) {
+      const div = document.createElement('div');
+      div.className = 'carte-commande';
+      div.dataset.index = index;
+      
+      // 提取字段（兼容大小写/空格）
+      const nom = cmd.name || 'Client';
+      const tracking = cmd['tracking number'] || cmd.trackingNumber || cmd.tracking || '—';
+      const statut = cmd.status || 'En traitement';
+      
+      // 左侧信息区
+      const infoDiv = document.createElement('div');
+      infoDiv.className = 'info-resume';
+      infoDiv.innerHTML = `
+        <span class="nom-client">${escapeHtml(nom)}</span>
+        <span class="numero-commande">${escapeHtml(tracking)}</span>
+      `;
+      
+      // 右侧操作区：状态标 + 密码输入 + 按钮
+      const actionDiv = document.createElement('div');
+      actionDiv.className = 'zone-saisie';
+      
+      const badge = document.createElement('span');
+      badge.className = 'badge-statut';
+      badge.textContent = statut;
+      
+      const inputPass = document.createElement('input');
+      inputPass.type = 'password';
+      inputPass.placeholder = 'Mot de passe';
+      inputPass.className = 'champ-code';
+      inputPass.setAttribute('aria-label', 'Mot de passe requis');
+      
+      const boutonAcces = document.createElement('button');
+      boutonAcces.className = 'bouton';
+      boutonAcces.textContent = 'Voir ➔';
+      
+      // 组装
+      actionDiv.appendChild(badge);
+      actionDiv.appendChild(inputPass);
+      actionDiv.appendChild(boutonAcces);
+      
+      div.appendChild(infoDiv);
+      div.appendChild(actionDiv);
+      
+      // 事件：点击按钮验证密码
+      boutonAcces.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const motSaisi = inputPass.value.trim();
+        const motAttendu = cmd.password || '';
+        
+        if (motSaisi === motAttendu) {
+          // 密码正确：显示详情
+          afficherDetailCommande(cmd);
+          inputPass.value = ''; // 清空
+          // 清除卡片区域可能旧错误提示 (我们没有在卡片上做错误，不处理)
+        } else {
+          alert('❌ Mot de passe incorrect. Veuillez réessayer.');
+          inputPass.value = '';
+          inputPass.focus();
+        }
+      });
+      
+      // 允许回车快速验证
+      inputPass.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          boutonAcces.click();
+        }
+      });
+      
+      // 点击卡片空白也可以聚焦到输入框 (提升体验)
+      div.addEventListener('click', (e) => {
+        // 如果点击的不是按钮或输入框本身
+        if (!e.target.closest('button') && !e.target.closest('input')) {
+          inputPass.focus();
+        }
+      });
+      
+      return div;
+    }
+
+    // 显示订单详情 (name, tracking number, status, descriptions, 并显示密码及复制)
+    function afficherDetailCommande(cmd) {
+      commandeActive = cmd;
+      
+      // 填充字段
+      detailNom.textContent = cmd.name || '—';
+      detailTracking.textContent = cmd['tracking number'] || cmd.trackingNumber || cmd.tracking || '—';
+      detailStatut.textContent = cmd.status || '—';
+      
+      const descriptionTexte = cmd.descriptions || cmd.description || 'Aucune description fournie.';
+      detailDescription.textContent = descriptionTexte;
+      
+      // 密码显示 (直接展示，因为已验证过)
+      const motdepasseVal = cmd.password || '';
+      detailMotdepasse.textContent = motdepasseVal;
+      
+      // 清空可能的错误/反馈
+      erreurDetail.classList.add('hidden');
+      feedbackCopie.textContent = '';
+      
+      // 显示面板
+      panneauDetail.classList.remove('hidden');
+      
+      // 平滑滚动到详情 (可选)
+      panneauDetail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // 关闭详情
+    function fermerDetail() {
+      panneauDetail.classList.add('hidden');
+      commandeActive = null;
+      erreurDetail.classList.add('hidden');
+    }
+
+    // 复制密码功能
+    function copierMotDePasse() {
+      if (!commandeActive) {
+        feedbackCopie.textContent = 'Aucune commande active.';
+        return;
+      }
+      const mdp = commandeActive.password || '';
+      if (!mdp) {
+        feedbackCopie.textContent = 'Aucun mot de passe à copier.';
+        return;
+      }
+      
+      navigator.clipboard.writeText(mdp).then(() => {
+        feedbackCopie.textContent = '✅ Copié !';
+        setTimeout(() => {
+          if (feedbackCopie) feedbackCopie.textContent = '';
+        }, 2000);
+      }).catch(err => {
+        console.warn('Clipboard échoué', err);
+        // fallback
+        const textArea = document.createElement('textarea');
+        textArea.value = mdp;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        feedbackCopie.textContent = '📋 Copié (fallback)';
+        setTimeout(() => { feedbackCopie.textContent = ''; }, 1500);
+      });
+    }
+
+    // ---------- 事件绑定 ----------
+    fermerDetailBtn.addEventListener('click', fermerDetail);
+    copierBtn.addEventListener('click', copierMotDePasse);
+    
+    // 初始化加载
+    chargerInfos();
+
+    // 额外：如果用户想关闭详情，点击详情外？不用。
+    // 监听窗口卸载等忽略
+    
+    // 若JSON请求失败，仍显示"Aucune commande pour l'instant"
+    // 已在catch中处理
+  })();
+</script>
+</body>
+</html>

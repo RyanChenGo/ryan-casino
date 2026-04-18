@@ -18,19 +18,19 @@
     "description": "Biscuits ? Vite !"
   },
   {
-    "name": "Lait"
+    "name": "Lait",
     "price": 8,
     "promotion": 0,
     "description": "Un lait original de Québon dans la cafétéria"
   },
   {
-    "name": "Lait au chocolat"
+    "name": "Lait au chocolat",
     "price": 20,
     "promotion": 10,
     "description": "Un lait de choco bien froide"
   },
   {
-    "name": "Crème glacée"
+    "name": "Crème glacée",
     "price": 60,
     "promotion": 10,
     "description": "Crème glacée , miam ! AH ! FROIDE ..."

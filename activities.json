@@ -8,5 +8,10 @@
         "name": "Tire au sort",
         "description": "Cet activité n'est pas encore commencé.",
         "bonus": "Cet activité n'est pas encore commencé."
+    },
+    {
+        "name": "Squid Game",
+        "description": "Quand je tourne ma tête bouge pas , si je ne regarde pas , le premier qui dépasse la ligne gagne , disponible chaque 2 jours",
+        "bonus": "30 points ou 3 juspoints"
     }
 ]

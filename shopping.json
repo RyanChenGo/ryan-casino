@@ -12,7 +12,7 @@
     "description": "Un jus dans la cafétéria"
   },
   {
-    "name": "Biscuit"
+    "name": "Biscuit",
     "price": 5,
     "promotion": 70,
     "description": "Biscuits ? Vite !"

@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assistant · Ryan Casino Inc.</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+    }
+
+    body {
+      background: linear-gradient(145deg, #f5f7fa 0%, #eef0f5 100%);
+      font-family: 'Segoe UI', 'Roboto', system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      color: #1a2639;
+    }
+
+    .assistant-container {
+      max-width: 750px;
+      width: 100%;
+      background: white;
+      border-radius: 36px;
+      box-shadow: 0 25px 40px -12px rgba(0,0,0,0.15);
+      overflow: hidden;
+      border: 1px solid #d7e1ec;
+    }
+
+    .header {
+      background: #1f3a5f;
+      padding: 22px 26px;
+      color: white;
+    }
+
+    .header h1 {
+      font-size: 1.9rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header p {
+      opacity: 0.8;
+      margin-top: 6px;
+      font-size: 0.95rem;
+    }
+
+    .chat-box {
+      height: 420px;
+      overflow-y: auto;
+      padding: 24px 22px;
+      background: #fafcff;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .message {
+      display: flex;
+      gap: 12px;
+      max-width: 85%;
+    }
+
+    .message.assistant {
+      align-self: flex-start;
+    }
+
+    .message.user {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+
+    .avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 60px;
+      background: #e0e9f4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .assistant .avatar {
+      background: #1f3a5f;
+      color: white;
+    }
+
+    .user .avatar {
+      background: #cbdae7;
+      color: #1a2639;
+    }
+
+    .bubble {
+      background: white;
+      padding: 14px 18px;
+      border-radius: 24px;
+      border-top-left-radius: 6px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+      border: 1px solid #e2ebf5;
+      line-height: 1.5;
+      color: #1e3b5c;
+    }
+
+    .user .bubble {
+      background: #1f3a5f;
+      color: white;
+      border: none;
+      border-top-right-radius: 6px;
+      border-top-left-radius: 24px;
+    }
+
+    .time {
+      font-size: 0.7rem;
+      color: #889bb2;
+      margin-top: 5px;
+      margin-left: 50px;
+    }
+
+    .user + .time {
+      text-align: right;
+      margin-right: 50px;
+      margin-left: 0;
+    }
+
+    .quick-actions {
+      padding: 16px 22px 10px;
+      background: white;
+      border-top: 1px solid #e6ecf5;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .quick-btn {
+      background: #eef3fc;
+      border: 1px solid #c7d8ec;
+      color: #1e3b5c;
+      padding: 10px 18px;
+      border-radius: 40px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+
+    .quick-btn:hover {
+      background: #dde7f5;
+      border-color: #8aa9d6;
+    }
+
+    .input-area {
+      display: flex;
+      padding: 16px 22px 22px;
+      background: white;
+      gap: 10px;
+      border-top: 1px solid #e6ecf5;
+    }
+
+    .input-area input {
+      flex: 1;
+      padding: 16px 18px;
+      border: 1.5px solid #d0ddea;
+      border-radius: 48px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border 0.15s;
+    }
+
+    .input-area input:focus {
+      border-color: #1f3a5f;
+      box-shadow: 0 0 0 3px rgba(31,58,95,0.1);
+    }
+
+    .input-area button {
+      background: #1f3a5f;
+      color: white;
+      border: none;
+      padding: 0 24px;
+      border-radius: 48px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: 0.12s;
+    }
+
+    .input-area button:hover {
+      background: #142b44;
+    }
+
+    .footer-note {
+      text-align: center;
+      font-size: 0.75rem;
+      padding: 8px 22px 18px;
+      color: #859eb9;
+    }
+  </style>
+</head>
+<body>
+<div class="assistant-container">
+  <div class="header">
+    <h1>
+      <span>🤖 Assistant Casino</span>
+    </h1>
+    <p>Posez votre question · Service client automatisé</p>
+  </div>
+
+  <div class="chat-box" id="chatBox"></div>
+
+  <div class="quick-actions">
+    <button class="quick-btn" data-msg="Où est ma commande ?">📦 Ma commande</button>
+    <button class="quick-btn" data-msg="Comment voir mes points ?">💎 Mes points</button>
+    <button class="quick-btn" data-msg="Quels sont les articles disponibles ?">🛍️ Articles</button>
+    <button class="quick-btn" data-msg="Comment commander ?">❓ Comment commander</button>
+    <button class="quick-btn" data-msg="Aide">📋 Aide</button>
+  </div>
+
+  <div class="input-area">
+    <input type="text" id="userInput" placeholder="Écrivez votre message..." autocomplete="off">
+    <button id="sendBtn">Envoyer</button>
+  </div>
+  <div class="footer-note">
+    🔒 Assistant officiel · Réponses automatiques
+  </div>
+</div>
+
+<script>
+  (function() {
+    const chatBox = document.getElementById('chatBox');
+    const userInput = document.getElementById('userInput');
+    const sendBtn = document.getElementById('sendBtn');
+
+    // ========== 脏话词库 (法语) ==========
+    const badWords = [
+      'merde', 'putain', 'con', 'connard', 'connasse', 'salope', 'salopard',
+      'enculé', 'fuck', 'shit', 'bite', 'cul', 'chatte', 'pénis', 'vagin',
+      'nique', 'ta gueule', 'ferme ta gueule', 'tg', 'ntm', 'fdp', 'pd',
+      'stupide', 'idiot', 'imbécile', 'débile', 'crétin', 'abruti'
+    ];
+
+    // 脏话回复 (随机选择)
+    const badWordResponses = [
+      "Merci de rester poli. Je suis là pour vous aider. 😊",
+      "Je préfère les conversations respectueuses. Posez votre question autrement.",
+      "Ce n'est pas très gentil. Essayez de reformuler.",
+      "Je ne réponds pas aux insultes. Besoin d'aide ? Dites 'aide'.",
+      "Ryan Casino Inc. privilégie la bienveillance. 🗿"
+    ];
+
+    // 脏话计数器 (同一用户连续脏话)
+    let badWordCount = 0;
+
+    // ========== 实用知识库 (纯帮助，无故事) ==========
+    const knowledge = {
+      'commande': {
+        keywords: ['commande', 'suivi', 'tracking', 'colis', 'où', 'statut', 'track'],
+        response: "Pour suivre votre commande, rendez-vous sur la page de suivi. Entrez votre mot de passe personnel pour voir le statut. Si votre commande n'apparaît pas, contactez Ryan directement."
+      },
+      'points': {
+        keywords: ['points', 'pts', 'solde', 'combien', 'crédit', 'point'],
+        response: "Les points sont gérés manuellement par Ryan. Pour connaître votre solde ou obtenir des points, adressez-vous à lui en personne ou par message."
+      },
+      'articles': {
+        keywords: ['articles', 'boutique', 'produits', 'disponible', 'quoi', 'vendre', 'magasin'],
+        response: "La boutique propose actuellement : Sac mystérieux (30 pts), Jus (10 pts), Biscuit (5 pts, souvent en promo), Lait (8 pts), Lait au chocolat (20 pts), Crème glacée (60 pts). Les prix peuvent varier."
+      },
+      'commander': {
+        keywords: ['commander', 'acheter', 'order', 'passer commande', 'prendre'],
+        response: "Pour commander, dites à Ryan ce que vous voulez. Il vous dira le total en points. Vous pouvez payer en points ou en argent réel (échange à convenir)."
+      },
+      'contact': {
+        keywords: ['contacter', 'ryan', 'parler', 'message', 'joindre'],
+        response: "Vous pouvez contacter Ryan par message privé, ou lui parler en personne à l'école. Il n'y a pas de formulaire de contact en ligne pour le moment."
+      },
+      'aide': {
+        keywords: ['aide', 'help', 'quoi', 'peux', 'fonctionne', 'que faire'],
+        response: "Je peux vous renseigner sur : vos commandes, vos points, les articles disponibles, comment commander, ou comment contacter Ryan. Tapez un mot-clé ou votre question."
+      },
+      'merci': {
+        keywords: ['merci', 'thanks', 'thank', 'remercie'],
+        response: "Avec plaisir ! N'hésitez pas si vous avez d'autres questions. Bonne journée ! 😊"
+      },
+      'bonjour': {
+        keywords: ['bonjour', 'salut', 'coucou', 'hello', 'hi', 'yo'],
+        response: "Bonjour ! Comment puis-je vous aider aujourd'hui ?"
+      },
+      'bye': {
+        keywords: ['bye', 'au revoir', 'adieu', 'à plus', 'a+', 'ciao', 'salut', 'quitter'],
+        response: "Au revoir ! Passez une excellente journée. 🗿"
+      }
+    };
+
+    // 默认回复
+    const defaultResponse = "Je n'ai pas compris. Vous pouvez me demander : 'Où est ma commande ?', 'Comment voir mes points ?', 'Quels sont les articles ?', ou 'Aide' pour la liste complète.";
+
+    // ========== 脏话检测 ==========
+    function containsBadWord(text) {
+      const lowerText = text.toLowerCase();
+      return badWords.some(word => lowerText.includes(word));
+    }
+
+    // ========== 生成回复 ==========
+    function generateResponse(input) {
+      const lowerInput = input.toLowerCase().trim();
+
+      // 1. 脏话检测 (最高优先级)
+      if (containsBadWord(lowerInput)) {
+        badWordCount++;
+        if (badWordCount >= 3) {
+          badWordCount = 0;
+          return "Vous avez utilisé plusieurs mots inappropriés. Je préfère arrêter cette conversation si elle n'est pas respectueuse. Revenez quand vous serez calme. 🗿";
+        }
+        return badWordResponses[Math.floor(Math.random() * badWordResponses.length)];
+      }
+
+      // 重置脏话计数 (用户正常说话)
+      badWordCount = 0;
+
+      // 2. 告别检测 (优先于普通回复)
+      if (knowledge.bye.keywords.some(kw => lowerInput.includes(kw))) {
+        return knowledge.bye.response;
+      }
+
+      // 3. 知识库匹配
+      for (let key in knowledge) {
+        const item = knowledge[key];
+        if (item.keywords && item.keywords.some(kw => lowerInput.includes(kw))) {
+          return item.response;
+        }
+      }
+
+      // 4. 默认
+      return defaultResponse;
+    }
+
+    // ========== 界面交互 ==========
+    function addMessage(text, sender, isUser = false) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message ${isUser ? 'user' : 'assistant'}`;
+      
+      const avatar = document.createElement('div');
+      avatar.className = 'avatar';
+      avatar.textContent = isUser ? '👤' : '🤖';
+      
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble';
+      bubble.textContent = text;
+      
+      if (isUser) {
+        messageDiv.appendChild(bubble);
+        messageDiv.appendChild(avatar);
+      } else {
+        messageDiv.appendChild(avatar);
+        messageDiv.appendChild(bubble);
+      }
+      
+      chatBox.appendChild(messageDiv);
+      
+      const timeDiv = document.createElement('div');
+      timeDiv.className = 'time';
+      const now = new Date();
+      timeDiv.textContent = `${now.getHours()}:${now.getMinutes().toString().padStart(2,'0')}`;
+      chatBox.appendChild(timeDiv);
+      
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function handleSend() {
+      const msg = userInput.value.trim();
+      if (!msg) return;
+      
+      addMessage(msg, 'user', true);
+      userInput.value = '';
+      
+      setTimeout(() => {
+        const reply = generateResponse(msg);
+        addMessage(reply, 'assistant', false);
+      }, 400);
+    }
+
+    // 快捷按钮
+    document.querySelectorAll('.quick-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        userInput.value = btn.dataset.msg;
+        handleSend();
+      });
+    });
+
+    sendBtn.addEventListener('click', handleSend);
+    userInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        handleSend();
+      }
+    });
+
+    // 欢迎消息
+    addMessage("Bonjour ! Je suis l'assistant de Ryan Casino Inc. Posez-moi une question sur les commandes, les points, ou les articles. Tapez 'aide' pour voir ce que je sais faire. 😊", 'assistant', false);
+  })();
+</script>
+</body>
+</html>

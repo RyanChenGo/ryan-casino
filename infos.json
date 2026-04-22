@@ -23,15 +23,22 @@
   {
     "name": "Harry Row",
     "tracking number": "Harry20260420_01",
-    "status": "Livré",
+    "status": "Colis récupéré",
     "descriptions": "Sac mystérieuse , qualité normale , normale",
     "password": "harry!"
   },
   {
     "name": "Laurie Beaupré",
     "tracking number": "Laurie20260421_01",
-    "status": "Fabrications en cours",
+    "status": "Colis récupéré",
     "descriptions": "Sac mystérieuse(qualité normale , normale) et un 2$ en chocolat",
+    "password": "laurie!"
+  },
+  {
+    "name": "Laurie Beaupré",
+    "tracking number": "Laurie20260422_01",
+    "status": "Fabrications en cours",
+    "descriptions": "Sac mystérieuse , qualité normale , normale",
     "password": "laurie!"
   }
 ]

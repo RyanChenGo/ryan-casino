@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Banque · Ryan Casino Inc.</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+    }
+
+    body {
+      background: linear-gradient(145deg, #f5f7fa 0%, #eef0f5 100%);
+      font-family: 'Segoe UI', 'Roboto', system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      color: #1a2639;
+    }
+
+    .banque-container {
+      max-width: 550px;
+      width: 100%;
+      background: white;
+      border-radius: 32px;
+      box-shadow: 0 20px 35px -6px rgba(0,0,0,0.1), 0 8px 15px -4px rgba(0,0,0,0.05);
+      padding: 32px 28px;
+      transition: all 0.2s ease;
+    }
+
+    .en-tete {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 600;
+      color: #0b1e33;
+    }
+
+    .sous-titre {
+      color: #5e6f8c;
+      margin-bottom: 28px;
+      font-weight: 400;
+      font-size: 0.95rem;
+      border-left: 4px solid #a0b8d4;
+      padding-left: 16px;
+    }
+
+    /* 登录区域 */
+    .login-box {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .login-box input {
+      padding: 16px 18px;
+      border: 1.5px solid #ccd9e9;
+      border-radius: 48px;
+      font-size: 1rem;
+      background: white;
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    .login-box input:focus {
+      border-color: #3e6b9c;
+      box-shadow: 0 0 0 3px rgba(62,107,156,0.1);
+    }
+
+    .login-box button {
+      background: #1f3a5f;
+      color: white;
+      border: none;
+      padding: 16px;
+      border-radius: 48px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.15s;
+      box-shadow: 0 3px 8px rgba(0,20,40,0.1);
+    }
+
+    .login-box button:hover {
+      background: #142b44;
+    }
+
+    .erreur-login {
+      color: #b13e3e;
+      background: #ffebeb;
+      padding: 10px 16px;
+      border-radius: 30px;
+      font-size: 0.9rem;
+      text-align: center;
+      display: none;
+    }
+
+    /* 仪表盘 */
+    .dashboard {
+      display: none;
+    }
+
+    .carte-solde {
+      background: linear-gradient(135deg, #1f3a5f 0%, #2a4a6e 100%);
+      color: white;
+      border-radius: 24px;
+      padding: 28px 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 12px 24px rgba(0,20,40,0.2);
+    }
+
+    .label-solde {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0.8;
+      margin-bottom: 6px;
+    }
+
+    .valeur-solde {
+      font-size: 3rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .unite-solde {
+      font-size: 1.2rem;
+      font-weight: 400;
+      opacity: 0.8;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .info-card {
+      background: #f3f8ff;
+      border-radius: 20px;
+      padding: 18px;
+      border: 1px solid #d6e3f5;
+    }
+
+    .info-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #5f7392;
+      margin-bottom: 6px;
+    }
+
+    .info-value {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #132a41;
+      word-break: break-all;
+    }
+
+    .ligne-motdepasse {
+      background: #f3f8ff;
+      border-radius: 48px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border: 1px solid #d6e3f5;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .texte-motdepasse {
+      font-family: monospace;
+      font-size: 1.3rem;
+      letter-spacing: 2px;
+      color: #1e3b5c;
+    }
+
+    .btn-copier {
+      background: #1f3a5f;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+
+    .btn-copier:hover {
+      background: #142b44;
+    }
+
+    .btn-deconnexion {
+      background: transparent;
+      border: 1.5px solid #ccd9e9;
+      color: #1f3a5f;
+      padding: 14px;
+      border-radius: 48px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      width: 100%;
+      transition: 0.15s;
+    }
+
+    .btn-deconnexion:hover {
+      background: #f5f7fa;
+    }
+
+    .feedback-copie {
+      font-size: 0.85rem;
+      color: #2b6e4f;
+      text-align: right;
+      margin-top: -12px;
+      margin-bottom: 12px;
+      min-height: 20px;
+    }
+
+    footer {
+      margin-top: 24px;
+      font-size: 0.75rem;
+      color: #7d93b0;
+      text-align: center;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 450px) {
+      .banque-container { padding: 22px 16px; }
+      .valeur-solde { font-size: 2.3rem; }
+      .info-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="banque-container">
+  <div class="en-tete">
+    <h1>🏦 Banque Casino</h1>
+  </div>
+  <p class="sous-titre">Connectez-vous pour voir votre solde</p>
+
+  <!-- 登录表单 -->
+  <div id="loginBox" class="login-box">
+    <input type="text" id="loginUsername" placeholder="Nom d'utilisateur" autocomplete="off">
+    <input type="password" id="loginPassword" placeholder="Mot de passe">
+    <button id="loginBtn">Se connecter</button>
+    <div id="erreurLogin" class="erreur-login"></div>
+  </div>
+
+  <!-- 仪表盘（登录后显示） -->
+  <div id="dashboard" class="dashboard">
+    <div class="carte-solde">
+      <div class="label-solde">Solde disponible</div>
+      <div class="valeur-solde"><span id="soldePts">—</span> <span class="unite-solde">pts</span></div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="info-label">Nom d'utilisateur</div>
+        <div class="info-value" id="infoUsername">—</div>
+      </div>
+      <div class="info-card">
+        <div class="info-label">Statut du compte</div>
+        <div class="info-value" id="infoStatut">Actif</div>
+      </div>
+    </div>
+
+    <div class="ligne-motdepasse">
+      <span class="texte-motdepasse" id="infoPassword">••••••</span>
+      <button class="btn-copier" id="copierPasswordBtn">📋 Copier</button>
+    </div>
+    <div class="feedback-copie" id="feedbackCopie"></div>
+
+    <button class="btn-deconnexion" id="deconnexionBtn">Se déconnecter</button>
+  </div>
+  
+  <footer>🔒 Banque officielle · Ryan Casino Inc.</footer>
+</div>
+
+<script>
+  (function() {
+    "use strict";
+
+    // DOM 元素
+    const loginBox = document.getElementById('loginBox');
+    const dashboard = document.getElementById('dashboard');
+    const loginUsername = document.getElementById('loginUsername');
+    const loginPassword = document.getElementById('loginPassword');
+    const loginBtn = document.getElementById('loginBtn');
+    const erreurLogin = document.getElementById('erreurLogin');
+    
+    const soldePts = document.getElementById('soldePts');
+    const infoUsername = document.getElementById('infoUsername');
+    const infoPassword = document.getElementById('infoPassword');
+    const copierPasswordBtn = document.getElementById('copierPasswordBtn');
+    const feedbackCopie = document.getElementById('feedbackCopie');
+    const deconnexionBtn = document.getElementById('deconnexionBtn');
+
+    let bankData = [];
+    let currentUser = null;  // 当前登录的用户对象
+
+    // 加载 bank.json
+    async function chargerBanque() {
+      try {
+        const response = await fetch('bank.json');
+        if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
+        const data = await response.json();
+        bankData = Array.isArray(data) ? data : [];
+      } catch (err) {
+        console.error('Impossible de charger bank.json:', err);
+        bankData = [];
+      }
+    }
+
+    // 登录验证
+    function verifierLogin(username, password) {
+      return bankData.find(user => 
+        user.username === username && user.password === password
+      );
+    }
+
+    // 处理登录
+    function handleLogin() {
+      const username = loginUsername.value.trim();
+      const password = loginPassword.value.trim();
+
+      if (!username || !password) {
+        afficherErreur('Veuillez remplir tous les champs.');
+        return;
+      }
+
+      const user = verifierLogin(username, password);
+      
+      if (user) {
+        currentUser = user;
+        afficherDashboard(user);
+        cacherErreur();
+        loginUsername.value = '';
+        loginPassword.value = '';
+      } else {
+        afficherErreur('Nom d\'utilisateur ou mot de passe incorrect.');
+      }
+    }
+
+    // 显示仪表盘
+    function afficherDashboard(user) {
+      loginBox.style.display = 'none';
+      dashboard.style.display = 'block';
+      
+      soldePts.textContent = user.pts !== undefined ? user.pts : '0';
+      infoUsername.textContent = user.username;
+      infoPassword.textContent = user.password;
+      
+      // 状态判断
+      const statutEl = document.getElementById('infoStatut');
+      const pts = parseInt(user.pts) || 0;
+      if (pts > 0) {
+        statutEl.textContent = 'Actif';
+        statutEl.style.color = '#1e4a3a';
+      } else if (pts === 0) {
+        statutEl.textContent = 'À sec';
+        statutEl.style.color = '#8a6d14';
+      } else {
+        statutEl.textContent = 'Endetté';
+        statutEl.style.color = '#b13e3e';
+      }
+    }
+
+    // 退出登录
+    function handleDeconnexion() {
+      currentUser = null;
+      dashboard.style.display = 'none';
+      loginBox.style.display = 'flex';
+      feedbackCopie.textContent = '';
+    }
+
+    // 显示错误
+    function afficherErreur(msg) {
+      erreurLogin.textContent = msg;
+      erreurLogin.style.display = 'block';
+    }
+
+    function cacherErreur() {
+      erreurLogin.style.display = 'none';
+    }
+
+    // 复制密码
+    function copierMotDePasse() {
+      if (!currentUser) return;
+      const mdp = currentUser.password || '';
+      
+      navigator.clipboard.writeText(mdp).then(() => {
+        feedbackCopie.textContent = '✅ Copié !';
+        setTimeout(() => { feedbackCopie.textContent = ''; }, 2000);
+      }).catch(() => {
+        // fallback
+        const textarea = document.createElement('textarea');
+        textarea.value = mdp;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        feedbackCopie.textContent = '📋 Copié (fallback)';
+        setTimeout(() => { feedbackCopie.textContent = ''; }, 1500);
+      });
+    }
+
+    // 事件绑定
+    loginBtn.addEventListener('click', handleLogin);
+    
+    loginPassword.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') handleLogin();
+    });
+    loginUsername.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') loginPassword.focus();
+    });
+
+    copierPasswordBtn.addEventListener('click', copierMotDePasse);
+    deconnexionBtn.addEventListener('click', handleDeconnexion);
+
+    // 初始化
+    chargerBanque();
+  })();
+</script>
+</body>
+</html>
